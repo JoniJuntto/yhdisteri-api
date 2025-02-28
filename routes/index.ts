@@ -1,9 +1,10 @@
 import express, { type Request, type Response } from "express";
 
-import { clerkClient, requireAuth, getAuth } from "@clerk/express";
+import { requireAuth } from "@clerk/express";
 import getOwnData from "./users/getOwnData";
 import getUserData from "./users/getUserData";
 import fetchOrganizationMembers from "./organizations/fetchOrganizationMembers";
+import { createUser } from "./users/createUser";
 
 const router = express.Router();
 
@@ -12,15 +13,17 @@ router.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ message: "Healthy" });
 });
 
+router.use(requireAuth());
 // User Routes
 const userRouter = express.Router();
-userRouter.get("/me", requireAuth, getOwnData);
-userRouter.get("/:id", requireAuth, getUserData);
+userRouter.get("/me", getOwnData);
+userRouter.get("/:id", getUserData);
+userRouter.post("/me/create", createUser);
 router.use("/users", userRouter);
 
 //Organization Routes
 const organizationRouter = express.Router();
-organizationRouter.get("/:id/members", requireAuth, fetchOrganizationMembers);
+organizationRouter.get("/:id/members", fetchOrganizationMembers);
 router.use("/organizations", organizationRouter);
 
 export default router;

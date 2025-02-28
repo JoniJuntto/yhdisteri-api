@@ -45,8 +45,9 @@ export const OrganizationAddresses = pgTable("organization_addresses", {
 // ORGANIZATION TABLES
 export const organizations = pgTable("organizations", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 100 }).notNull(),
+  name: varchar("name", { length: 100 }),
   paymentsActive: boolean("payments_active").notNull().default(false),
+  code: varchar("code", { length: 6 }).notNull().unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -54,6 +55,7 @@ export const organizations = pgTable("organizations", {
 // MEMBER TABLES
 export const members = pgTable("members", {
   id: uuid("id").primaryKey().defaultRandom(),
+  externalId: varchar("external_id", { length: 255 }).notNull().unique(),
   firstName: varchar("first_name", { length: 100 }).notNull(),
   lastName: varchar("last_name", { length: 100 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
