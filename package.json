@@ -12,7 +12,7 @@
     "tsx": "^4.19.3"
   },
   "scripts": {
-    "dev": "bun run index.ts"
+    "dev": "bun run index.ts --watch"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

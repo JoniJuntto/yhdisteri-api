@@ -14,7 +14,7 @@ const httpServer = createServer(app);
 app.use(express.json());
 app.use(cors());
 app.use(clerkMiddleware());
-app.use("/api/v1", routes);
+app.use("", routes);
 
 const PORT = process.env.PORT || 3002;
 httpServer.listen(PORT, () => {

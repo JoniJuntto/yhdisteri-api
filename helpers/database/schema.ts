@@ -68,6 +68,15 @@ export const members = pgTable("members", {
   role: varchar("role", { length: 50 }).$type<"admin" | "member" | "guest">(),
   lastActive: timestamp("last_active"),
   notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const membersOrganizations = pgTable("members_organizations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  memberId: uuid("member_id")
+    .notNull()
+    .references(() => members.id),
   organizationId: uuid("organization_id")
     .notNull()
     .references(() => organizations.id),
@@ -83,6 +92,7 @@ export const memberRelations = relations(members, ({ one, many }) => ({
   dataExportRequests: many(dataExportRequests),
   dataDeletionRequests: many(dataDeletionRequests),
   manualPayments: many(manualPayments),
+  organizations: many(membersOrganizations),
 }));
 
 export const organizationRelations = relations(
