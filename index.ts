@@ -10,11 +10,11 @@ dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
-
+app.use(clerkMiddleware());
 app.use(express.json());
 app.use(cors());
-app.use(clerkMiddleware());
 app.use("", routes);
+
 
 const PORT = process.env.PORT || 3002;
 httpServer.listen(PORT, () => {

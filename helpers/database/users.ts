@@ -34,7 +34,7 @@ const fillUserInfo = async (
       memberId: user[0].id,
       organizationId: organization[0].id,
     });
-    return user;
+    return user[0];
   }
 
   if (organizationInfo.type === "create") {
@@ -62,8 +62,16 @@ const fillUserInfo = async (
       memberId: user[0].id,
       organizationId: organization[0].id,
     });
-    return user;
+    return user[0];
   }
 };
 
-export { fillUserInfo };
+const getUserByExternalId = async (externalId: string) => {
+  const user = await db
+    .select()
+    .from(members)
+    .where(eq(members.externalId, externalId));
+  return user;
+};
+
+export { fillUserInfo, getUserByExternalId };

@@ -9,10 +9,12 @@
     "@types/jwk-to-pem": "^2.0.3",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.5",
+    "openapi-typescript": "^7.6.1",
     "tsx": "^4.19.3"
   },
   "scripts": {
-    "dev": "bun run index.ts --watch"
+    "dev": "bun run index.ts --watch",
+    "generate-types": "openapi-typescript ./types/api.yaml -o ./types/types.ts"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

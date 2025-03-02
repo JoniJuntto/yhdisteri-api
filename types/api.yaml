@@ -1,0 +1,214 @@
+openapi: 3.0.0
+info:
+  title: Yhdisteri API
+  version: 1.0.0
+  description: API for Yhdisteri application
+
+servers:
+  - url: http://localhost:3002
+    description: Development server
+
+
+security:
+  - BearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      security: []
+      responses:
+        200:
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Healthy"
+  /users/me:
+    get:
+      summary: Get current user data
+      responses:
+        200:
+          description: Current user data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        400:
+          description: User not found
+        401:
+          description: Unauthorized
+        500:
+          description: Internal server error
+  /users/create:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    externalId:
+                      type: string
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    organizationInfo:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        code:
+                          type: string
+                        name:
+                          type: string
+                    email:
+                      type: string
+                    phone:
+                      type: string
+      responses:
+        200:
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        400:
+          description: User creation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /users/organizations:
+    get:
+      summary: Get organizations for current user
+      responses:
+        200:
+          description: List of organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        401:
+          description: Unauthorized
+        404:
+          description: Organization not found
+        500:
+          description: Internal server error
+  /organizations/{id}/members:
+    get:
+      summary: Get members of an organization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of organization members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Member' 
+        400:
+          description: Organization not found
+        401:
+          description: Unauthorized
+        404:
+          description: Organization not found
+        500:
+          description: Internal server error
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        paymentsActive:
+          type: boolean
+        code:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Member:
+      type: object
+      properties:
+        id:
+          type: string
+        externalId:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        joinDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [active, inactive, pending, deleted, suspended]
+        profileImageUrl:
+          type: string
+        role:
+          type: string
+        lastActive:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

@@ -7,6 +7,7 @@ const fetchOrganizationMembers = async (req: Request, res: Response) => {
     const members = await getOrganizationMembers(id);
     if (!members) {
       res.status(404).json({ error: "Organization members not found" });
+      return;
     }
     res.status(200).json(members);
   } catch (error) {

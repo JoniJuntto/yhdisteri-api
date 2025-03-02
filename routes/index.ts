@@ -14,16 +14,14 @@ router.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ message: "Healthy" });
 });
 
-// Apply authentication middleware after public routes
 router.use(requireAuth());
 
 // User Routes
 const userRouter = express.Router();
+userRouter.get("/organizations", getUserOrganizations);
 userRouter.get("/me", getOwnData);
 userRouter.get("/:id", getUserData);
-// Make sure this route doesn't redirect back to itself
-userRouter.post("/create", createUser); // Changed from "/me/create" to "/create"
-userRouter.get("/organizations", getUserOrganizations); // Changed from "/me/organizations" to "/organizations"
+userRouter.post("/create", createUser);
 router.use("/users", userRouter);
 
 //Organization Routes

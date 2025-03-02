@@ -18,7 +18,10 @@ const getOrganizationMembers = async (organizationId: string) => {
   return organizationMembers.map((row) => row.member);
 };
 
-const getOrganizationsByUserId = async (userId: string) => {
+const getOrganizationsByUserExternalId = async (userId: string) => {
+  const memberId = await db.select({
+    id: members.id,
+  }).from(members).where(eq(members.externalId, userId));
   const organizationsData = await db
     .select({
       organization: organizationsTable,
@@ -28,9 +31,9 @@ const getOrganizationsByUserId = async (userId: string) => {
       organizationsTable,
       eq(membersOrganizations.organizationId, organizationsTable.id)
     )
-    .where(eq(membersOrganizations.memberId, userId));
+    .where(eq(membersOrganizations.memberId, memberId[0].id));
 
   return organizationsData.map((row) => row.organization);
 };
 
-export { getOrganizationMembers, getOrganizationsByUserId };
+export { getOrganizationMembers, getOrganizationsByUserExternalId };

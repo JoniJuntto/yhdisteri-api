@@ -20,10 +20,10 @@ export const createUser = async (req: Request, res: Response) => {
   if (dbResponse) {
     res
       .status(200)
-      .json({ message: "User created successfully", user: dbResponse });
+      .json(dbResponse);
   } else {
     res
-      .status(400)
-      .json({ message: "User creation failed", error: dbResponse });
+      .status(400).json({message: "User creation failed"})
+      
   }
 };
