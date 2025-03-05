@@ -6,6 +6,8 @@ import getUserData from "./users/getUserData";
 import fetchOrganizationMembers from "./organizations/fetchOrganizationMembers";
 import { createUser } from "./users/createUser";
 import { getUserOrganizations } from "./organizations/getUserOrganizations";
+import { createOrganization } from "./organizations/createOrganization";
+import { fetchPlans } from "./plans/fetchAllPlans";
 
 const router = express.Router();
 
@@ -27,6 +29,11 @@ router.use("/users", userRouter);
 //Organization Routes
 const organizationRouter = express.Router();
 organizationRouter.get("/:id/members", fetchOrganizationMembers);
+organizationRouter.post("/create", createOrganization);
 router.use("/organizations", organizationRouter);
+
+const plansRouter = express.Router();
+plansRouter.get("/", fetchPlans);
+router.use("/plans", plansRouter);
 
 export default router;

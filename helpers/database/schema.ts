@@ -10,8 +10,6 @@ import {
   numeric,
   integer,
   json,
-  foreignKey,
-  primaryKey,
 } from "drizzle-orm/pg-core";
 
 export const addresses = pgTable("addresses", {
@@ -21,7 +19,6 @@ export const addresses = pgTable("addresses", {
     .references(() => members.id, { onDelete: "cascade" }),
   street: varchar("street", { length: 255 }).notNull(),
   city: varchar("city", { length: 100 }).notNull(),
-  state: varchar("state", { length: 100 }).notNull(),
   zipCode: varchar("zip_code", { length: 20 }).notNull(),
   country: varchar("country", { length: 100 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -35,7 +32,6 @@ export const OrganizationAddresses = pgTable("organization_addresses", {
     .references(() => organizations.id),
   street: varchar("street", { length: 255 }).notNull(),
   city: varchar("city", { length: 100 }).notNull(),
-  state: varchar("state", { length: 100 }).notNull(),
   zipCode: varchar("zip_code", { length: 20 }).notNull(),
   country: varchar("country", { length: 100 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -95,6 +91,18 @@ export const memberRelations = relations(members, ({ one, many }) => ({
   organizations: many(membersOrganizations),
 }));
 
+export const organizationPlans = pgTable("organization_plans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id),
+  planId: uuid("plan_id")
+    .notNull()
+    .references(() => plans.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const organizationRelations = relations(
   organizations,
   ({ one, many }) => ({
@@ -102,12 +110,13 @@ export const organizationRelations = relations(
     members: many(members),
     gdprSettings: one(gdprSettings),
     plans: one(plans),
+    organizationPlans: one(organizationPlans),
     subscriptions: one(subscriptions),
     invoices: many(invoices),
     manualPayments: many(manualPayments),
     dataExportRequests: many(dataExportRequests),
     dataDeletionRequests: many(dataDeletionRequests),
-  })
+  }),
 );
 
 export const memberships = pgTable("memberships", {
@@ -174,21 +183,21 @@ export const dataRetentionPolicies = pgTable("data_retention_policies", {
     length: 10,
   }).$type<"days" | "months" | "years" | null>(),
   communicationHistoryIndefinite: boolean(
-    "communication_history_indefinite"
+    "communication_history_indefinite",
   ).default(false),
   paymentInformationValue: integer("payment_information_value"),
   paymentInformationUnit: varchar("payment_information_unit", {
     length: 10,
   }).$type<"days" | "months" | "years" | null>(),
   paymentInformationIndefinite: boolean(
-    "payment_information_indefinite"
+    "payment_information_indefinite",
   ).default(false),
   inactiveAccountsValue: integer("inactive_accounts_value"),
   inactiveAccountsUnit: varchar("inactive_accounts_unit", { length: 10 }).$type<
     "days" | "months" | "years" | null
   >(),
   inactiveAccountsIndefinite: boolean("inactive_accounts_indefinite").default(
-    false
+    false,
   ),
   automaticDeletion: boolean("automatic_deletion").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import db from ".";
 import { members, membersOrganizations, organizations } from "./schema";
 
@@ -29,7 +29,16 @@ const fillUserInfo = async (
         joinDate: new Date().toISOString(),
         status: "pending",
       })
-      .returning();
+      .onConflictDoUpdate({
+        target: [members.externalId],
+        set: {
+          firstName,
+          lastName,
+          email,
+          phone,
+        },
+      })
+      .returning()
     await db.insert(membersOrganizations).values({
       memberId: user[0].id,
       organizationId: organization[0].id,
@@ -56,6 +65,13 @@ const fillUserInfo = async (
         phone,
         joinDate: new Date().toISOString(),
         status: "pending",
+      })
+      .onConflictDoUpdate({
+        target: [members.externalId],
+        set: {
+          firstName,
+          lastName,
+        },
       })
       .returning();
     await db.insert(membersOrganizations).values({

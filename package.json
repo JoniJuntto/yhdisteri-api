@@ -10,6 +10,7 @@
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.5",
     "openapi-typescript": "^7.6.1",
+    "prettier": "3.5.3",
     "tsx": "^4.19.3"
   },
   "scripts": {

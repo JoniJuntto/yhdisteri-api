@@ -8,7 +8,6 @@ servers:
   - url: http://localhost:3002
     description: Development server
 
-
 security:
   - BearerAuth: []
 
@@ -37,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Member'
+                $ref: "#/components/schemas/Member"
   /users/{id}:
     get:
       summary: Get user by ID
@@ -53,7 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Member'
+                $ref: "#/components/schemas/Member"
         400:
           description: User not found
         401:
@@ -98,7 +97,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Member'
+                $ref: "#/components/schemas/Member"
         400:
           description: User creation failed
           content:
@@ -119,7 +118,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Organization'
+                  $ref: "#/components/schemas/Organization"
         401:
           description: Unauthorized
         404:
@@ -143,7 +142,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Member' 
+                  $ref: "#/components/schemas/Member"
         400:
           description: Organization not found
         401:
@@ -152,6 +151,58 @@ paths:
           description: Organization not found
         500:
           description: Internal server error
+  /organizations/create:
+    post:
+      summary: Create a new organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                paymentsActive:
+                  type: boolean
+                street:
+                  type: string
+                city:
+                  type: string
+                zipCode:
+                  type: string
+                country:
+                  type: string
+      responses:
+        200:
+          description: Organization created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  organization:
+                    $ref: "#/components/schemas/Organization"
+                  organizationAddress:
+                    $ref: "#/components/schemas/OrganizationAddress"
+                  organizationMember:
+                    $ref: "#/components/schemas/OrganizationMember"
+        400:
+          description: Organization creation failed
+        500:
+          description: Internal server error
+  /plans:
+    get:
+      summary: Get all plans
+      responses:
+        200:
+          description: List of plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Plan"
 components:
   securitySchemes:
     BearerAuth:
@@ -206,6 +257,71 @@ components:
           format: date-time
         notes:
           type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    OrganizationAddress:
+      type: object
+      properties:
+        id:
+          type: string
+        organizationId:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    OrganizationMember:
+      type: object
+      properties:
+        id:
+          type: string
+        organizationId:
+          type: string
+        memberId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Plan:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        interval:
+          type: string
+        features:
+          type: array
+          items:
+            type: string
+        isPopular:
+          type: boolean
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
         createdAt:
           type: string
           format: date-time
