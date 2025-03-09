@@ -26,7 +26,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Healthy"
+                    example: 'Healthy'
   /users/me:
     get:
       summary: Get current user data
@@ -36,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Member"
+                $ref: '#/components/schemas/Member'
   /users/{id}:
     get:
       summary: Get user by ID
@@ -52,7 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Member"
+                $ref: '#/components/schemas/Member'
         400:
           description: User not found
         401:
@@ -97,7 +97,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Member"
+                $ref: '#/components/schemas/Member'
         400:
           description: User creation failed
           content:
@@ -118,7 +118,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Organization"
+                  $ref: '#/components/schemas/OrganizationWithStatusAndRole'
         401:
           description: Unauthorized
         404:
@@ -142,12 +142,32 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Member"
+                  $ref: '#/components/schemas/Member'
         400:
           description: Organization not found
         401:
           description: Unauthorized
         404:
+          description: Organization not found
+        500:
+          description: Internal server error
+  /organizations/{id}:
+    get:
+      summary: Get organization by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Organization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        400:
           description: Organization not found
         500:
           description: Internal server error
@@ -182,11 +202,11 @@ paths:
                 type: object
                 properties:
                   organization:
-                    $ref: "#/components/schemas/Organization"
+                    $ref: '#/components/schemas/Organization'
                   organizationAddress:
-                    $ref: "#/components/schemas/OrganizationAddress"
+                    $ref: '#/components/schemas/OrganizationAddress'
                   organizationMember:
-                    $ref: "#/components/schemas/OrganizationMember"
+                    $ref: '#/components/schemas/OrganizationMember'
         400:
           description: Organization creation failed
         500:
@@ -202,7 +222,30 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Plan"
+                  $ref: '#/components/schemas/Plan'
+  /organizations/{organizationId}/members/{memberId}/approve:
+    post:
+      summary: Approve a member
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Member approved
+        400:
+          description: Member not found
+        401:
+          description: Unauthorized
+        500:
+          description: Internal server error
 components:
   securitySchemes:
     BearerAuth:
@@ -225,6 +268,30 @@ components:
           type: string
           format: date-time
         updatedAt:
+          type: string
+          format: date-time
+    OrganizationWithStatusAndRole:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        paymentsActive:
+          type: boolean
+        code:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+        role:
+          type: string
+        joinDate:
           type: string
           format: date-time
     Member:

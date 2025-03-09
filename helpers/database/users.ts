@@ -1,6 +1,6 @@
-import { and, eq } from "drizzle-orm";
-import db from ".";
-import { members, membersOrganizations, organizations } from "./schema";
+import { and, eq } from 'drizzle-orm';
+import db from '.';
+import { members, membersOrganizations, organizations } from './schema';
 
 const fillUserInfo = async (
   externalId: string,
@@ -8,15 +8,15 @@ const fillUserInfo = async (
   lastName: string,
   organizationInfo: { type: string; code: string; name: string },
   email: string,
-  phone: string
+  phone: string,
 ) => {
-  if (organizationInfo.type === "join") {
+  if (organizationInfo.type === 'join') {
     const organization = await db
       .select()
       .from(organizations)
       .where(eq(organizations.code, organizationInfo.code));
     if (!organization) {
-      return { error: "Organization not found" };
+      return { error: 'Organization not found' };
     }
     const user = await db
       .insert(members)
@@ -26,8 +26,6 @@ const fillUserInfo = async (
         lastName,
         email,
         phone,
-        joinDate: new Date().toISOString(),
-        status: "pending",
       })
       .onConflictDoUpdate({
         target: [members.externalId],
@@ -38,15 +36,17 @@ const fillUserInfo = async (
           phone,
         },
       })
-      .returning()
+      .returning();
     await db.insert(membersOrganizations).values({
       memberId: user[0].id,
       organizationId: organization[0].id,
+      status: 'pending',
+      role: 'member',
     });
     return user[0];
   }
 
-  if (organizationInfo.type === "create") {
+  if (organizationInfo.type === 'create') {
     const code = Math.random().toString(36).substring(2, 8);
     const organization = await db
       .insert(organizations)
@@ -63,8 +63,6 @@ const fillUserInfo = async (
         lastName,
         email,
         phone,
-        joinDate: new Date().toISOString(),
-        status: "pending",
       })
       .onConflictDoUpdate({
         target: [members.externalId],
@@ -77,6 +75,8 @@ const fillUserInfo = async (
     await db.insert(membersOrganizations).values({
       memberId: user[0].id,
       organizationId: organization[0].id,
+      status: 'active',
+      role: 'admin',
     });
     return user[0];
   }
