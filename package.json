@@ -14,7 +14,7 @@
     "tsx": "^4.19.3"
   },
   "scripts": {
-    "dev": "bun run index.ts --watch",
+    "dev": "bun run --watch index.ts",
     "generate-types": "openapi-typescript ./types/api.yaml -o ./types/types.ts"
   },
   "peerDependencies": {

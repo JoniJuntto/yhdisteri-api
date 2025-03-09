@@ -90,4 +90,75 @@ const getUserByExternalId = async (externalId: string) => {
   return user;
 };
 
-export { fillUserInfo, getUserByExternalId };
+const getUserById = async (id: string, organizationId: string) => {
+  const user = await db.select().from(members).where(eq(members.id, id));
+  const userOrganizationData = await db
+    .select()
+    .from(membersOrganizations)
+    .where(
+      and(
+        eq(membersOrganizations.memberId, id),
+        eq(membersOrganizations.organizationId, organizationId),
+      ),
+    );
+  return { ...user[0], ...userOrganizationData[0] };
+};
+
+const changeMemberStatus = async (
+  organizationId: string,
+  memberId: string,
+  status: 'active' | 'inactive' | 'pending' | 'deleted' | 'suspended',
+) => {
+  const member = await db
+    .update(membersOrganizations)
+    .set({ status })
+    .where(
+      and(
+        eq(membersOrganizations.memberId, memberId),
+        eq(membersOrganizations.organizationId, organizationId),
+      ),
+    )
+    .returning();
+  return member[0];
+};
+
+const updateUserById = async (
+  id: string,
+  {
+    firstName,
+    lastName,
+    email,
+    phone,
+    notes,
+    status,
+    role,
+  }: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    notes: string;
+    status: 'active' | 'inactive' | 'pending' | 'deleted' | 'suspended';
+    role: 'admin' | 'member' | 'guest';
+  },
+) => {
+  const user = await db
+    .update(members)
+    .set({ firstName, lastName, email, phone })
+    .where(eq(members.id, id))
+    .returning();
+
+  await db
+    .update(membersOrganizations)
+    .set({ status, role, notes })
+    .where(eq(membersOrganizations.memberId, id));
+
+  return user[0];
+};
+export {
+  fillUserInfo,
+  getUserByExternalId,
+  changeMemberStatus,
+  getUserById,
+  updateUserById,
+};

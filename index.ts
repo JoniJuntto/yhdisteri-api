@@ -1,10 +1,10 @@
-import express from "express";
-import { createServer } from "http";
-import routes from "./routes";
-import cors from "cors";
-import dotenv from "dotenv";
-import { logger } from "./helpers/logger";
-import { clerkMiddleware } from "@clerk/express";
+import express from 'express';
+import { createServer } from 'http';
+import routes from './routes';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { logger } from './helpers/logger';
+import { clerkMiddleware } from '@clerk/express';
 
 dotenv.config();
 
@@ -13,8 +13,7 @@ const httpServer = createServer(app);
 app.use(clerkMiddleware());
 app.use(express.json());
 app.use(cors());
-app.use("", routes);
-
+app.use('', routes);
 
 const PORT = process.env.PORT || 3002;
 httpServer.listen(PORT, () => {

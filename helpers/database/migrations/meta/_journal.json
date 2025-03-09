@@ -57,6 +57,13 @@
       "when": 1741372795535,
       "tag": "0007_parallel_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1741546052710,
+      "tag": "0008_little_quicksilver",
+      "breakpoints": true
     }
   ]
 }

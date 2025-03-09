@@ -58,7 +58,6 @@ export const members = pgTable('members', {
   phone: varchar('phone', { length: 20 }),
   profileImageUrl: varchar('profile_image_url', { length: 255 }),
   lastActive: timestamp('last_active'),
-  notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -76,6 +75,18 @@ export const membersOrganizations = pgTable('members_organizations', {
     .$type<'active' | 'inactive' | 'pending' | 'deleted' | 'suspended'>(),
   joinDate: timestamp('join_date').defaultNow().notNull(),
   role: varchar('role', { length: 50 }).$type<'admin' | 'member' | 'guest'>(),
+  notes: text('notes'),
+  memberShipPaid: boolean('member_ship_paid').notNull().default(false),
+  memberShipStartDate: date('member_ship_start_date'),
+  memberShipEndDate: date('member_ship_end_date'),
+  memberShipPaidAt: timestamp('member_ship_paid_at'),
+  memberShipPaidAmount: numeric('member_ship_paid_amount', {
+    precision: 10,
+    scale: 2,
+  }),
+  memberShipPaidCurrency: varchar('member_ship_paid_currency', {
+    length: 3,
+  }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
